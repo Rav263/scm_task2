@@ -1,0 +1,138 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}           
+\usepackage[justification=centering]{caption}
+\usepackage[backend=bibtex,sorting=none]{biblatex}
+\usepackage{fontspec}
+\usepackage[final]{graphicx}
+\usepackage{tabularx,booktabs}
+\newcolumntype{C}{>{\centering\arraybackslash}X} % centered version of "X" type
+\setlength{\extrarowheight}{3pt}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{mathtools}
+\usepackage{adjustbox}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{fontspec}
+\usepackage{amssymb}
+%\usepackage{unicode-math}
+\graphicspath{{./images/}}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\newcommand{\A}{\underline{A}}
+\newcommand{\B}{\underline{B}}
+\newcommand{\und}[1]{\underline{#1}}
+\newcommand{\sqft}[3]{#1_{#2}, \ldots, #1_{#3}}
+
+\usepackage[%
+        a4paper,%
+        includehead,%
+        left=2cm,%
+        top=0.95cm,%
+        right=2cm,%
+        bottom=1.65cm,%
+        headheight=0.7cm,%
+        headsep=0.3cm,%
+        footskip=0.8cm]{geometry}
+\special{papersize=210mm,297mm}
+
+\lstdefinestyle{mystyle}{
+    language=xml,
+    backgroundcolor=\color{white},   
+    commentstyle=\color{codegreen},
+    keywordstyle=[1]{\color{magenta}},
+    keywordstyle=[2]{\color{blue}},
+    numberstyle=\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    keywords=[1]{*,<,>,algo, params, param, block, vertex, arg, in},            % if you want to add more keywords to the set
+    keywords=[2]{*, id, name, condition, dims, type, val, bsrc, src, value},            % if you want to add more keywords to the set
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=10pt,
+    xleftmargin=7mm,
+    xrightmargin=0mm,
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+\lstset{style=mystyle}
+\lstset{linewidth=1.1\linewidth}
+\setmainfont{Times New Roman}
+\setmonofont{Monaco}
+\title{Отчёт по практическому заданию (2) в рамках курса\\«Суперкомпьютерное моделирование и технологии»\\Вариант 5}
+\author{Никифоров Никита Игоревич, гр. 621\\nickiforov.nik@gmail.com}
+\date{Октябрь 2022}
+\pgfplotsset{compat=1.17}
+            
+\renewcommand{\baselinestretch}{1.5}
+\begin{document}
+\maketitle
+\newpage
+\section{Задача}
+    Необходимо реализовать численный метод Монте-Карло нахождения значения интеграла
+    в заданной области. Для реализации метода предлагается использовать языки программирования 
+    {\tt C/C++}, с использованием библиотеки параллельного вычисления {\tt MPI}.
+
+    Необходимо провести исследование реализованного численного метода для
+    заданного интеграла, области и точности 
+    на параллельных вычислительных системах ВМК МГУ: {\tt IBM Blue Gene/P}, {\tt IBM Polus}
+\section{Математическая постановка задачи}
+    Пусть функция \(f(x, y, z) = x^3*y^2*z\)~--- непрерывна в ограниченной замкнутой области \(G \subset \mathbb{R}^3\).
+    Требуется вычислить определённый интеграл:
+    \begin{equation}
+        I\ =\ \iiint_G f(x, y, z)\ dxdydz = \iiint_G x^3*y^2*z\ dxdydz,
+        \label{eq:integ}
+    \end{equation}
+    где область \(G={(x,y,z):\ −1 \leq x \leq 0,\ −1\leq y \leq 0,\ −1\leq z \leq 0}\)
+\section{Численный метод решения задачи (Монте-Карло)}
+    Пусть заданная область \(G\) ограниченна параллелепипедом \(P:\ a_1 \leq x \leq b_2,\ a_2 \leq y \leq b_2,\ a_3 \leq z \leq b_3\)
+    Рассмотрим функцию определённую на параллелепипеде \(P\):
+    \begin{equation}
+        F(x, y, z)\ =\
+        \begin{cases}
+            f(x, y, z), & (x, y, z) \in G\\
+            0         , & (x, y, z) \notin G\\
+        \end{cases}
+        \label{eq:funcF}
+    \end{equation}
+
+    Преобразуем искомый интеграл~\ref{eq:integ} - подставив функцию~\ref{eq:funcF}.
+    
+    \begin{equation}
+        I\ =\ \iiint_G f(x, y, z)\ dxdydz\ =\ \iiint_P F(x, y, z)\ dxdydz,
+        \label{eq:integF}
+    \end{equation}
+
+    Пусть \(p_1:\ (x_1, y_1, z_1),\ p_2:\ (x_2, y_2, z_2),\ldots, p_n:\ (x_n, y_n, z_n)\)~---
+    случайные точки равномерно распределённые по области \(P\). Тогда в качестве приближённого
+    значения интеграла~\ref{eq:integF} предлагается использовать выражение:
+    \begin{equation}
+        I \approx |P| * \frac{1}{n} *\sum_{i=1}^n F(p_i),
+    \end{equation}
+    где \(|P|\) — объём параллелепипеда \(P\), \(|P| = (b_1 − a_1)(b_2 − a_2)(b_3 − a_3)\).
+\section{Аналитическое решение задачи}
+    Найдём аналитически интеграл~\ref{eq:integ}:
+    \begin{equation}
+        \begin{aligned}
+        I &= \iiint_G x^3*y^2*z\ dxdydz\ = \int_{-1}^{0} dx\int_{-1}^{0} dy \int_{-1}^{0} x^3*y^2*z\ dz\ =\\
+          &\frac{x^4}{4}\biggr\rvert_{-1}^{0}\frac{y^3}{3}\biggr\rvert_{-1}^{0}\frac{z^2}{2}\biggr\rvert_{-1}^{0}\ =\ 
+            \frac{1}{24} * x^4y^3z^2\biggr\rvert_{-1}^{0}\ =\ \frac{1}{24} \approx 0.0416(6)
+        \end{aligned}
+    \end{equation}
+\section{Программная реализация}
+\end{document}
