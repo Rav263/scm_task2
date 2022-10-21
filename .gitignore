@@ -1,0 +1,5 @@
+*.aux
+*.bib
+*.log
+*.run.xml
+*.swp
