@@ -1,12 +1,24 @@
 import numpy as np
 import pandas as pd
+import sys
 
-cpus = [1, 4, 8, 16, 32, 60]
+cpus = [1, 4, 8, 16, 32]
 eps = ["1.5e-6", "5.0e-6", "3.0e-5"]
-runs = [1, 2, 3, 4, 5]
+runs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+if len(sys.argv) > 1:
+    server_name = sys.argv[1]
+else:
+    server_name = "polus"
+if len(sys.argv) > 2:
+    param_name = sys.argv[2]
+    if param_name in ["time, time_pp, err, points"]:
+        param_name = "time_pp"
+else:
+    param_name = "time_pp"
 
 def read_file(cpu, eps, run):
-    file_name = f"results/polus/res_{eps}_{cpu}_run_{run}"
+    file_name = f"results/{server_name}/res_{eps}_{cpu}_run_{run}"
     f = open(file_name)
     for line_number, line in enumerate(f):
         words = line.strip().split()
@@ -70,25 +82,30 @@ for ep in eps:
     df_points = df_points.set_index("cpus")
     per_eps_data[ep] = pd.concat([df_err, df_time, df_time_pp, df_points], axis = 1)
 
-#print(per_eps_data)
-
-import matplotlib.pyplot as plt
-
 
 for now_eps in per_eps_data:
+    print(now_eps)
     value = per_eps_data[now_eps]
+    print(value[["mean_time","mean_err", "mean_time_pp"]]) #, "mean_err", "mean_time_pp"])
 
-    plt.xticks(ticks=[*range(len(value.index))], labels=value.index)
-    plt.errorbar([*range(len(value.index))], value["mean_time"], 
-                 #yerr=value["std_time_pp"], 
-                 linestyle='-',marker=".", 
-                 capsize=4, label = f"eps={now_eps}")
-    
-    plt.grid ()
-    plt.xlabel ('Количество процессов')
-    plt.ylabel ('Среднее время на вычисление')
-    plt.legend (loc = 'best')
-    plt.savefig(f"{now_eps}_time.pdf")
-    plt.clf()
+#print(per_eps_data)
+
+#import matplotlib.pyplot as plt
+#
+#for now_eps in per_eps_data:
+#    value = per_eps_data[now_eps]
+#
+#    plt.xticks(ticks=[*range(len(value.index))], labels=value.index)
+#    plt.errorbar([*range(len(value.index))], value[f"mean_{param_name}"], 
+#                 yerr=value[f"std_{param_name}"], 
+#                 linestyle='-',marker=".", 
+#                 capsize=4, label = f"eps={now_eps}")
+#    
+#    plt.grid ()
+#    plt.xlabel ('Количество процессов')
+#    plt.ylabel ('Среднее время на вычисление одной точки (с)')
+#    plt.legend (loc = 'best')
+#    plt.savefig(f"{now_eps}_{server_name}_{param_name}.pdf")
+#    plt.clf()
 
 
