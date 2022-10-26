@@ -1,0 +1,53 @@
+Sender: LSF System <lsfadmin@polus-c3-ib.bmc.hpc.cs.msu.ru>
+Subject: Job 915892: <# this file was automaticly created by mpisubmit.pl script for edu-cmc-skmodel22-621-03 #;source /polusfs/setenv/setup.SMPI;#BSUB -n 1;#BSUB -W 00:10;#BSUB -o results_ibm_task_2/res_3.0e-5_1_run_7;#BSUB -e main_ibm.%J.err;OMP_NUM_THREADS=1 mpiexec main_ibm 3.0e-5> in cluster <MSUCluster> Done
+
+Job <# this file was automaticly created by mpisubmit.pl script for edu-cmc-skmodel22-621-03 #;source /polusfs/setenv/setup.SMPI;#BSUB -n 1;#BSUB -W 00:10;#BSUB -o results_ibm_task_2/res_3.0e-5_1_run_7;#BSUB -e main_ibm.%J.err;OMP_NUM_THREADS=1 mpiexec main_ibm 3.0e-5> was submitted from host <polus-ib.bmc.hpc.cs.msu.ru> by user <edu-cmc-skmodel22-621-03> in cluster <MSUCluster> at Wed Oct 26 12:55:13 2022
+Job was executed on host(s) <polus-c3-ib.bmc.hpc.cs.msu.ru>, in queue <short>, as user <edu-cmc-skmodel22-621-03> in cluster <MSUCluster> at Wed Oct 26 12:55:14 2022
+</home_edu/edu-cmc-skmodel22-621/edu-cmc-skmodel22-621-03> was used as the home directory.
+</home_edu/edu-cmc-skmodel22-621/edu-cmc-skmodel22-621-03> was used as the working directory.
+Started at Wed Oct 26 12:55:14 2022
+Terminated at Wed Oct 26 12:55:16 2022
+Results reported at Wed Oct 26 12:55:16 2022
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+# this file was automaticly created by mpisubmit.pl script for edu-cmc-skmodel22-621-03 #
+source /polusfs/setenv/setup.SMPI
+#BSUB -n 1
+#BSUB -W 00:10
+#BSUB -o results_ibm_task_2/res_3.0e-5_1_run_7
+#BSUB -e main_ibm.%J.err
+OMP_NUM_THREADS=1 mpiexec main_ibm 3.0e-5
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   0.32 sec.
+    Max Memory :                                 31 MB
+    Average Memory :                             22.00 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Swap :                                   -
+    Max Processes :                              5
+    Max Threads :                                12
+    Run time :                                   1 sec.
+    Turnaround time :                            3 sec.
+
+The output (if any) follows:
+
+Solution   error:  : 8.1233486374301944e-06
+Compute    solution: 0.041674790015304095
+Points     elapsed:  2100
+Time       elapsed:  0.007254044059664011sec.
+Time per point elap: 3.4543066950781006e-06sec.
+
+
+PS:
+
+Read file <main_ibm.915892.err> for stderr output of this job.
+
