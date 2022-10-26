@@ -7,7 +7,12 @@ for cpu in 1 4 8 16 32
 do
     for run in $(seq $1 1 $2)
     do
-	    echo "mpirun -n ${cpu} main ${eps} > results/home_pc/res_${eps}_${cpu}_run_${run}"
-	    #mpirun -n ${cpu} main ${eps} > results/home_pc/res_${eps}_${cpu}_run_${run}
+        if ((${cpu} == 32)); then
+	        echo "mpirun --use-hwthread-cpus -n ${cpu} main ${eps} > results/home_pc/res_${eps}_${cpu}_run_${run}"
+	        mpirun --use-hwthread-cpus -n ${cpu} main ${eps} > results/home_pc/res_${eps}_${cpu}_run_${run}
+        else
+	        echo "mpirun -n ${cpu} main ${eps} > results/home_pc/res_${eps}_${cpu}_run_${run}"
+	        mpirun -n ${cpu} main ${eps} > results/home_pc/res_${eps}_${cpu}_run_${run}
+        fi
     done
 done
